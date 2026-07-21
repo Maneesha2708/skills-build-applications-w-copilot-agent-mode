@@ -4,66 +4,61 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const mongoose_1 = __importDefault(require("mongoose"));
+const database_1 = require("./config/database");
+const models_1 = require("./models");
 const app = (0, express_1.default)();
 const port = Number(process.env.PORT) || 8000;
-const users = [{ id: 1, name: 'Ava Chen', email: 'ava@example.com' }];
-const teams = [{ id: 1, name: 'Momentum Squad', goal: 'Weekly consistency' }];
-const activities = [{ id: 1, name: 'Morning Run', duration: 30 }];
-const leaderboard = [{ id: 1, name: 'Ava Chen', score: 120 }];
-const workouts = [{ id: 1, name: 'HIIT Circuit', intensity: 'high' }];
 function getApiBaseUrl() {
     const codespaceName = process.env.CODESPACE_NAME;
     return codespaceName
         ? `https://${codespaceName}-8000.app.github.dev`
         : `http://localhost:${port}`;
 }
-function createItem(items, body) {
-    const item = { id: Date.now(), ...body };
-    items.push(item);
-    return item;
-}
 app.use(express_1.default.json());
 app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok', service: 'octofit-backend', apiBaseUrl: getApiBaseUrl() });
 });
-app.get('/api/users/', (_req, res) => {
+app.get('/api/users/', async (_req, res) => {
+    const users = await models_1.User.find({}).lean();
     res.json(users);
 });
-app.post('/api/users/', (req, res) => {
-    const user = createItem(users, req.body);
+app.post('/api/users/', async (req, res) => {
+    const user = await models_1.User.create(req.body);
     res.status(201).json(user);
 });
-app.get('/api/teams/', (_req, res) => {
+app.get('/api/teams/', async (_req, res) => {
+    const teams = await models_1.Team.find({}).lean();
     res.json(teams);
 });
-app.post('/api/teams/', (req, res) => {
-    const team = createItem(teams, req.body);
+app.post('/api/teams/', async (req, res) => {
+    const team = await models_1.Team.create(req.body);
     res.status(201).json(team);
 });
-app.get('/api/activities/', (_req, res) => {
+app.get('/api/activities/', async (_req, res) => {
+    const activities = await models_1.Activity.find({}).lean();
     res.json(activities);
 });
-app.post('/api/activities/', (req, res) => {
-    const activity = createItem(activities, req.body);
+app.post('/api/activities/', async (req, res) => {
+    const activity = await models_1.Activity.create(req.body);
     res.status(201).json(activity);
 });
-app.get('/api/leaderboard/', (_req, res) => {
+app.get('/api/leaderboard/', async (_req, res) => {
+    const leaderboard = await models_1.LeaderboardEntry.find({}).lean();
     res.json(leaderboard);
 });
-app.post('/api/leaderboard/', (req, res) => {
-    const entry = createItem(leaderboard, req.body);
+app.post('/api/leaderboard/', async (req, res) => {
+    const entry = await models_1.LeaderboardEntry.create(req.body);
     res.status(201).json(entry);
 });
-app.get('/api/workouts/', (_req, res) => {
+app.get('/api/workouts/', async (_req, res) => {
+    const workouts = await models_1.Workout.find({}).lean();
     res.json(workouts);
 });
-app.post('/api/workouts/', (req, res) => {
-    const workout = createItem(workouts, req.body);
+app.post('/api/workouts/', async (req, res) => {
+    const workout = await models_1.Workout.create(req.body);
     res.status(201).json(workout);
 });
-mongoose_1.default
-    .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit_db')
+(0, database_1.connectToDatabase)()
     .then(() => {
     console.log('Connected to MongoDB');
     app.listen(port, () => {
