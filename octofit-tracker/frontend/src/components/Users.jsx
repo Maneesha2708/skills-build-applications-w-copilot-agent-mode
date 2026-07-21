@@ -5,11 +5,7 @@ function Users() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const codespaceName = import.meta.env.VITE_CODESPACE_NAME?.trim();
-  const apiBaseUrl = codespaceName
-    ? `https://${codespaceName}-8000.app.github.dev/api`
-    : 'http://localhost:8000/api';
-  const apiUrl = `${apiBaseUrl}/users/`;
+  const apiUrl = buildApiUrl('users');
 
   useEffect(() => {
     let isMounted = true;

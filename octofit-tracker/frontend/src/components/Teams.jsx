@@ -5,11 +5,7 @@ function Teams() {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const codespaceName = import.meta.env.VITE_CODESPACE_NAME?.trim();
-  const apiBaseUrl = codespaceName
-    ? `https://${codespaceName}-8000.app.github.dev/api`
-    : 'http://localhost:8000/api';
-  const apiUrl = `${apiBaseUrl}/teams/`;
+  const apiUrl = buildApiUrl('teams');
 
   useEffect(() => {
     let isMounted = true;
