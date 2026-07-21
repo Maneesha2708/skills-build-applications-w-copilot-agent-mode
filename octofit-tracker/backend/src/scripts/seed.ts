@@ -1,20 +1,51 @@
-import mongoose from 'mongoose';
-
-const connectionString = process.env.MONGODB_URI || 'mongodb://localhost:27017/octofit_db';
+import { connectToDatabase } from '../config/database';
+import { Activity, LeaderboardEntry, Team, User, Workout } from '../models';
 
 /**
  * Seed the octofit_db database with test data
  */
 async function seedDatabase() {
   try {
-    await mongoose.connect(connectionString);
-
+    await connectToDatabase();
     console.log('Connected to octofit_db');
 
-    // TODO: Add seed data for users, teams, activities, leaderboard, and workouts
+    await User.deleteMany({});
+    await Team.deleteMany({});
+    await Activity.deleteMany({});
+    await LeaderboardEntry.deleteMany({});
+    await Workout.deleteMany({});
+
+    await User.insertMany([
+      { name: 'Ava Chen', email: 'ava.chen@example.com', fitnessGoal: 'Run a half marathon' },
+      { name: 'Liam Ortiz', email: 'liam.ortiz@example.com', fitnessGoal: 'Build strength' },
+      { name: 'Nia Brooks', email: 'nia.brooks@example.com', fitnessGoal: 'Improve mobility' },
+    ]);
+
+    await Team.insertMany([
+      { name: 'Momentum Squad', goal: 'Weekly consistency', location: 'Seattle' },
+      { name: 'Peak Performers', goal: 'Competitive training', location: 'Austin' },
+    ]);
+
+    await Activity.insertMany([
+      { userName: 'Ava Chen', type: 'Run', durationMinutes: 35, distanceMiles: 4.2 },
+      { userName: 'Liam Ortiz', type: 'Strength', durationMinutes: 50 },
+      { userName: 'Nia Brooks', type: 'Yoga', durationMinutes: 30, distanceMiles: 0 },
+    ]);
+
+    await LeaderboardEntry.insertMany([
+      { name: 'Ava Chen', score: 142, teamName: 'Momentum Squad' },
+      { name: 'Liam Ortiz', score: 128, teamName: 'Peak Performers' },
+      { name: 'Nia Brooks', score: 119, teamName: 'Momentum Squad' },
+    ]);
+
+    await Workout.insertMany([
+      { name: 'HIIT Circuit', durationMinutes: 25, intensity: 'High' },
+      { name: 'Recovery Mobility', durationMinutes: 20, intensity: 'Low' },
+      { name: 'Tempo Run', durationMinutes: 40, intensity: 'Medium' },
+    ]);
 
     console.log('Database seeding complete');
-    await mongoose.disconnect();
+    process.exit(0);
   } catch (error) {
     console.error('Error seeding database:', error);
     process.exit(1);
