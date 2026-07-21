@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
-import { buildApiUrl, normalizeCollection } from '../lib/api';
+import { normalizeCollection } from '../lib/api';
 
 function Teams() {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const apiUrl = buildApiUrl('teams');
+  const codespaceName = import.meta.env.VITE_CODESPACE_NAME?.trim();
+  const apiUrl = codespaceName
+    ? `https://${codespaceName}-8000.app.github.dev/api/teams/`
+    : 'http://localhost:8000/api/teams/';
 
   useEffect(() => {
     let isMounted = true;

@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
-import { buildApiUrl, normalizeCollection } from '../lib/api';
+import { normalizeCollection } from '../lib/api';
 
 function Leaderboard() {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const apiUrl = buildApiUrl('leaderboard');
+  const codespaceName = import.meta.env.VITE_CODESPACE_NAME?.trim();
+  const apiUrl = codespaceName
+    ? `https://${codespaceName}-8000.app.github.dev/api/leaderboard/`
+    : 'http://localhost:8000/api/leaderboard/';
 
   useEffect(() => {
     let isMounted = true;

@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
-import { buildApiUrl, normalizeCollection } from '../lib/api';
+import { normalizeCollection } from '../lib/api';
 
 function Users() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const apiUrl = buildApiUrl('users');
+  const codespaceName = import.meta.env.VITE_CODESPACE_NAME?.trim();
+  const apiUrl = codespaceName
+    ? `https://${codespaceName}-8000.app.github.dev/api/users/`
+    : 'http://localhost:8000/api/users/';
 
   useEffect(() => {
     let isMounted = true;
